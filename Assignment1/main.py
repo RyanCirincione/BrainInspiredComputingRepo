@@ -84,7 +84,7 @@ def hodgkin_huxley(input, potential, n , m , h, output):
     #proportion of ion channels in which the activation gate is open
     m = alpha_m/(alpha_m+beta_m)
     #print ("m : ", m)
-    #proportion of ion channels in which the activation gate is open
+    #proportion of ion channels in which the inactivation gate is open
     h = alpha_h/(alpha_h+beta_h)
     #print ("h : ", h)
     #sodium ion channels have both activation and inactivation gates
