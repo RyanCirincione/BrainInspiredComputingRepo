@@ -5,9 +5,9 @@ import math
 
 
 # Constants
-CAPACITANCE = 1
-RESISTANCE = 25
-THRESHOLD = 250
+CAPACITANCE = 2
+RESISTANCE = 2
+THRESHOLD = 15
 #Constants for Hoxley
 
 VoltageNa = -115
@@ -71,7 +71,7 @@ def izhikevich(input, potential, recovery, output):
 def hodgkin_huxley(input, potential, n , m , h, output):
     v = potential
 
-    #print ("v :", v)
+    print ("v :", v)
 
     alpha_n = 0.01 * ((10 + v)/(math.exp((10 + v) / 10)-1))
     beta_n = 0.125 * math.exp(v/80)
@@ -83,13 +83,13 @@ def hodgkin_huxley(input, potential, n , m , h, output):
     beta_h = 1 / (math.exp((30 + v)/10) + 1)
 
     n = alpha_n/(alpha_n+beta_n)
-    #print ("n : ", n)
+    print ("n : ", n)
     #proportion of ion channels in which the activation gate is open
     m = alpha_m/(alpha_m+beta_m)
-    #print ("m : ", m)
+    print ("m : ", m)
     #proportion of ion channels in which the activation gate is open
     h = alpha_h/(alpha_h+beta_h)
-    #print ("h : ", h)
+    print ("h : ", h)
     #sodium ion channels have both activation and inactivation gates
     ionConductanceOfNa = maximumConductanceOfNa * m * h
     #potassium ion channels have only activation gates
@@ -100,20 +100,28 @@ def hodgkin_huxley(input, potential, n , m , h, output):
 
     #currents
     sodium = ionConductanceOfNa * (m**3) * h * (v - VoltageNa)
+    print("sodium: ",sodium)
     potassium = ionConductanceOfK * (n**4) * (v - VoltageK)
+    print("Potassium: ", potassium)
     leaky = ionConductanceOfL * (v - VoltageL)
+    print("leaky: ", leaky)
 
     #potentials
+    print("input: ", input)
+    print("Yeet: ",alpha_n * (1-n))
+    print("Yote ",- beta_n * n)
     potential += (input - sodium - potassium - leaky) / CAPACITANCE
     n +=  alpha_n * (1-n) - beta_n * n
     m +=  alpha_m * (1-m) - beta_m * m
     h +=  alpha_h * (1-h) - beta_h * h
 
-
+    if(potential > 10):
+        potential = -70;
 
 
     output[0].append(potential)
-    potential = 0
+    if(potential > 10):
+        potential = -70
     output[1].append(n)
     output[2].append(m)
     output[3].append(h)
@@ -140,10 +148,10 @@ while len(input) > 1:
         input.pop(0)
     tick += 1
 
-    i = 10 if random.random() < input[0][1] else 0
+    i = 5 if random.random() < input[0][1] else 0
 
-    potential = LIF(i, potential, output)
-    #potential, recovery = izhikevich(i, potential, recovery, output)
+    #potential = LIF(i, potential, output)
+    potential, recovery = izhikevich(i, potential, recovery, output)
     #potential, n, m, h = hodgkin_huxley(i, potential, n, m, h, output)
 
 plt.plot(output[0], label="potential")
