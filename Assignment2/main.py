@@ -9,7 +9,10 @@ class LIFNeuron:
         potential += (input - potential/RESISTANCE) / CAPACITANCE
         # If membrane potential reaches threshold, fire!
         if potential > THRESHOLD:
+            return True
             potential = 0
+
+        return False
 
 HIDDEN_LAYER_SIZE = 5
 
