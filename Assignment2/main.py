@@ -1,6 +1,6 @@
-CAPACITANCE = 2
-RESISTANCE = 2
-THRESHOLD = 15
+CAPACITANCE = 1
+RESISTANCE = 1
+THRESHOLD = 2
 SPIKE_VALUE = 1
 
 class LIFNeuron:
@@ -8,18 +8,18 @@ class LIFNeuron:
     weights = []
 
     def __init__(self, numInputs):
-        self.weights = [0.5] * numInputs # TODO: change 0.5 to be random, otherwise network is symmetric
+        self.weights = [5] * numInputs # TODO: change 0.5 to be random, otherwise network is symmetric
 
     def update(self, inputs):
         for i in range(0, len(inputs)):
             inputs[i] = inputs[i] * self.weights[i]
 
         for input in inputs:
-            potential += (input - potential/RESISTANCE) / CAPACITANCE
+            self.potential += (input - self.potential/RESISTANCE) / CAPACITANCE
         # If membrane potential reaches threshold, fire!
-        if potential > THRESHOLD:
+        if self.potential > THRESHOLD:
             return SPIKE_VALUE
-            potential = 0
+            self.potential = 0
 
         return 0
 
@@ -36,4 +36,12 @@ def updateNetwork(x, y, hiddenLayer, out):
     for i in range(0, len(hiddenLayer)):
         spikes.append(hiddenLayer[i].update([x, y]))
 
-    outNeuron.update(spikes)
+    return out.update(spikes)
+
+# consider each iteration of this loop 1 milisecond
+for i in range(0, 1000):
+    # This will alternate every 100 ms between a "high" signal (1 and 0 alternating) and "low" signal(0s, with 1 every 10 ms)
+    x = 1 if (i % (2 if int(i / 100) % 2 == 0 else 10)) == 0 else 0
+    y = 1 if (i % (2 if int(i / 100) % 2 == 0 else 10)) == 0 else 0
+
+    print(updateNetwork(x, y, hiddenLayer, outNeuron))
