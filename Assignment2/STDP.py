@@ -13,7 +13,9 @@ class LIFNeuron:
     lastSpike = 0
 
     def __init__(self, numInputs, newName):
-        self.weights = [5] * numInputs # TODO: change 0.5 to be random, otherwise network is symmetric
+        self.weights = []
+        for i in range(numInputs):
+            self.weights.append(10 * (random.random() - 0.5))
         self.times = [1] * numInputs
         self.name = newName
 
@@ -70,7 +72,7 @@ def updateNetwork(x, y, hiddenLayer, out):
 # consider each iteration of this loop 1 milisecond
 failures = 0
 for j in  range(0,10):
-    for i in range(0, 1):
+    for i in range(0, 1000):
         # 50/50 of x or y being 1 or 0
         x = 1 if random.random() > 0.5 else 0
         y = 1 if random.random() > 0.5 else 0
