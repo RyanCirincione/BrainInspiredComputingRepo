@@ -30,7 +30,7 @@ recovery = 0
 n = 0
 m = 0
 h = 0
-#
+#LIF Fires
 
 def LIF(input, potential, output):
     # LIF formula
@@ -116,7 +116,7 @@ def hodgkin_huxley(input, potential, n , m , h, output):
     h +=  alpha_h * (1-h) - beta_h * h
 
     if(potential > 10):
-        potential = -70;
+        potential = -70
 
 
     output[0].append(potential)
@@ -151,11 +151,11 @@ while len(input) > 1:
     i = 5 if random.random() < input[0][1] else 0
 
     #potential = LIF(i, potential, output)
-    potential, recovery = izhikevich(i, potential, recovery, output)
-    #potential, n, m, h = hodgkin_huxley(i, potential, n, m, h, output)
+    #potential, recovery = izhikevich(i, potential, recovery, output)
+    potential, n, m, h = hodgkin_huxley(i, potential, n, m, h, output)
 
 plt.plot(output[0], label="potential")
-plt.plot(output[1], label="n")
+plt.plot(output[1], label="recovery")
 plt.plot(output[2], label="m")
 plt.plot(output[3], label="h")
 plt.legend()
