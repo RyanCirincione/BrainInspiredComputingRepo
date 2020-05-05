@@ -63,16 +63,34 @@ for i in range(0, HIDDEN_LAYER_SIZE):
 
 # x and y are simulated input neurons
 def updateNetwork(x, y, hiddenLayer, out):
-    spikes = []
-    for i in range(0, len(hiddenLayer)):
-        spikes.append(hiddenLayer[i].update([x, y]))
+    numSpikes = 0
+    for time in range(500):
+        spikes = []
+        inX = 0
+        inY = 0
+        if x == 1:
+            inX = 1 if (time % 2 == 0) else 0
+        else:
+            inX = 1 if (time % 10 == 0) else 0
+        if y == 1:
+            inY = 1 if (time % 2 == 0) else 0
+        else:
+            inY = 1 if (time % 10 == 0) else 0
 
-    return out.update(spikes)
+        for i in range(0, len(hiddenLayer)):
+            spikes.append(hiddenLayer[i].update([inX, inY]))
+        if x != y:
+            out.potential = THRESHOLD * 100 if (time % 2 == 0) else out.potential
+        else:
+            out.potential = THRESHOLD * 100 if (time % 10 == 0) else out.potential
+        numSpikes += out.update(spikes)
+
+    return numSpikes
 
 # consider each iteration of this loop 1 milisecond
 failures = 0
 for j in  range(0,1):
-    for i in range(0, 1000):
+    for i in range(0, 100):
         # 50/50 of x or y being 1 or 0
        # x = 1 if random.random() > 0.5 else 0
        # y = 1 if random.random() > 0.5 else 0
@@ -88,8 +106,6 @@ for j in  range(0,1):
         elif i % 4 == 3:
           x = 0
           y = 1
-        if (x == 0 and y == 1) or (x == 1 and y == 0) or (x == 0 and y == 0):
-            outNeuron.potential = THRESHOLD*100
         outSpike = updateNetwork(x, y, hiddenLayer, outNeuron)
 
     for i in range  (0,len(outNeuron.weights)):
