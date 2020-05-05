@@ -1,9 +1,9 @@
 import random
 CAPACITANCE = 1
-RESISTANCE = 40
-THRESHOLD = 2
+RESISTANCE = 20
+THRESHOLD = 4
 SPIKE_VALUE = 1
-POST_SPIKE = 5
+POST_SPIKE = 14
 
 class LIFNeuron:
     potential = 0
@@ -16,7 +16,7 @@ class LIFNeuron:
         self.weights = []
         for i in range(numInputs):
             self.weights.append(10 * (random.random() - 0.5))
-        self.times = [1] * numInputs
+        self.times = [0] * numInputs
         self.name = newName
 
     def update(self, inputs):
@@ -43,14 +43,14 @@ class LIFNeuron:
     def updateWeights (self,inputs):
         counter = 0
         for i in range (0,len(inputs)):
-            if self.potential > THRESHOLD:
-                self.weights[counter] = self.weights[counter] + (((self.times[counter])**-1)/2)
-                if self.weights[counter] >= 10:
-                    self.weights[counter] = 10
+            if self.potential > THRESHOLD and self.times[counter] != 0:
+                self.weights[counter] = self.weights[counter] + (((self.times[counter])**-1)*1.5)
+                if self.weights[counter] >= 6:
+                    self.weights[counter] = 6
             elif self.times[i] > 0 and self.lastSpike > 0:
-                self.weights[counter] = self.weights[counter] - ((self.lastSpike)/10)
-                if self.weights[counter] <= -10:
-                    self.weights[counter] = -10
+                self.weights[counter] = self.weights[counter] - ((self.lastSpike)/30)
+                if self.weights[counter] <= -6:
+                    self.weights[counter] = -6
             counter +=1
 
 
@@ -71,22 +71,28 @@ def updateNetwork(x, y, hiddenLayer, out):
 
 # consider each iteration of this loop 1 milisecond
 failures = 0
-for j in  range(0,10):
-    for i in range(0, 1000):
+for j in  range(0,1):
+    for i in range(0, 10):
         # 50/50 of x or y being 1 or 0
-        x = 1 if random.random() > 0.5 else 0
-        y = 1 if random.random() > 0.5 else 0
-
+        #x = 1 if random.random() > 0.5 else 0
+        #y = 1 if random.random() > 0.5 else 0
+        if i % 4 == 0:
+            x = 1
+            y = 0
+        elif i % 4 == 1:
+            x = 1
+            y = 1
+        elif i % 4 == 2:
+            x = 0
+            y = 1
+        elif i % 4 == 3:
+            x = 0
+            y = 0
         if (x == 0 and y == 1) or (x == 1 and y == 0):
-            outNeuron.potential = THRESHOLD + 1
+            outNeuron.potential = THRESHOLD*100
         outSpike = updateNetwork(x, y, hiddenLayer, outNeuron)
-        if x == 1 and y == 1 and outSpike == 1:
-            failures += 1
-        elif (x == 0 and y == 1 and outSpike == 0) or (x == 1 and y == 0 and outSpike == 0):
-            failures += 1
 
-    print("After ", ((j+1)*100), " runs the program has failed ", failures, " times with a success rate of ", (((j+1)*100)-failures)/((j+1)*100) * 100, "%")
-    for i in range  (0,len(outNeuron.weights)-1):
+    for i in range  (0,len(outNeuron.weights)):
         print("Weight of Neuron ", i, ": ", outNeuron.weights[i])
 
 x = 0
